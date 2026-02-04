@@ -328,6 +328,8 @@ body {
   --petal-count: 40;
   --petal-angle: 9deg;
   --stem-target: 200px;
+  --core-radius: 25px;
+  --petal-offset: -12px;
 }
 
 .stem {
@@ -396,92 +398,48 @@ body {
   will-change: transform, opacity;
 }
 
-.petal-rotation {
+.petals {
   position: absolute;
   inset: 0;
   transform-origin: center;
 }
 
-.petal-ring {
+.petal {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 58px;
+  background: linear-gradient(180deg, rgba(232, 212, 255, 0.95), rgba(155, 104, 233, 0.9));
   border-radius: 50%;
-  background-image:
-    repeating-conic-gradient(
-      from 0deg,
-      rgba(196, 164, 255, 0.9) 0deg calc(var(--petal-angle) * 0.55),
-      rgba(150, 96, 230, 0.95) calc(var(--petal-angle) * 0.55) calc(var(--petal-angle) * 0.9),
-      transparent calc(var(--petal-angle) * 0.9) var(--petal-angle)
-    );
-  mask-image: radial-gradient(circle, transparent 34%, black 36%);
-  filter: drop-shadow(0 6px 10px rgba(98, 64, 152, 0.25));
-  opacity: 0.9;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--petal-rotate))
+    translateY(calc((var(--petal-radius) + var(--core-radius) + var(--petal-offset)) * -1))
+    scaleY(var(--petal-stretch, 1));
+  transform-origin: center 88%;
+  opacity: 0;
+  filter: drop-shadow(0 6px 8px rgba(98, 64, 152, 0.25));
+  animation: petal-pop 0.6s ease-out forwards;
+  animation-delay: var(--petal-delay, 0s);
 }
 
-.ring-outer {
-  transform: scale(1);
-  animation: petal-wave 3.8s ease-in-out infinite;
-}
-
-.ring-outer-2 {
-  transform: scale(0.92);
-  background-image:
-    repeating-conic-gradient(
-      from 6deg,
-      rgba(208, 178, 255, 0.95) 0deg calc(var(--petal-angle) * 0.55),
-      rgba(162, 110, 238, 0.95) calc(var(--petal-angle) * 0.55) calc(var(--petal-angle) * 0.9),
-      transparent calc(var(--petal-angle) * 0.9) var(--petal-angle)
-    );
-  mask-image: radial-gradient(circle, transparent 30%, black 32%);
-  animation: petal-wave 3.4s ease-in-out infinite reverse;
-}
-
-.ring-middle {
-  transform: scale(0.82);
-  background-image:
-    repeating-conic-gradient(
-      from 12deg,
-      rgba(212, 186, 255, 0.95) 0deg calc(var(--petal-angle) * 0.5),
-      rgba(160, 110, 238, 0.95) calc(var(--petal-angle) * 0.5) calc(var(--petal-angle) * 0.85),
-      transparent calc(var(--petal-angle) * 0.85) var(--petal-angle)
-    );
-  mask-image: radial-gradient(circle, transparent 26%, black 28%);
-  animation: petal-wave 3s ease-in-out infinite reverse;
-}
-
-.ring-middle-2 {
-  transform: scale(0.74);
-  background-image:
-    repeating-conic-gradient(
-      from 4deg,
-      rgba(224, 200, 255, 0.95) 0deg calc(var(--petal-angle) * 0.5),
-      rgba(170, 120, 242, 0.95) calc(var(--petal-angle) * 0.5) calc(var(--petal-angle) * 0.85),
-      transparent calc(var(--petal-angle) * 0.85) var(--petal-angle)
-    );
-  mask-image: radial-gradient(circle, transparent 22%, black 24%);
-  animation: petal-wave 2.8s ease-in-out infinite;
-}
-
-.ring-inner {
-  transform: scale(0.65);
-  background-image:
-    repeating-conic-gradient(
-      from 8deg,
-      rgba(232, 212, 255, 0.95) 0deg calc(var(--petal-angle) * 0.45),
-      rgba(176, 130, 245, 0.95) calc(var(--petal-angle) * 0.45) calc(var(--petal-angle) * 0.8),
-      transparent calc(var(--petal-angle) * 0.8) var(--petal-angle)
-    );
-  mask-image: radial-gradient(circle, transparent 18%, black 20%);
-  animation: petal-wave 2.6s ease-in-out infinite;
+.petal::after {
+  content: '';
+  position: absolute;
+  inset: 12% 18%;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  filter: blur(0.4px);
 }
 
 .core {
   position: absolute;
-  width: 50px;
-  height: 50px;
+  width: calc(var(--core-radius) * 2);
+  height: calc(var(--core-radius) * 2);
   background: radial-gradient(circle, #ffdff7 0%, #f8c2ef 70%, #d38cda 100%);
   border-radius: 50%;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: inset 0 0 10px rgba(160, 98, 200, 0.5);
@@ -560,8 +518,8 @@ body {
   animation: bloom 2.6s ease-out forwards, breathe 4.8s ease-in-out infinite 2.6s;
 }
 
-.chrysanthemum.bloomed .petal-rotation {
-  animation: petal-spin 12s steps(var(--petal-count)) infinite 0.4s;
+.chrysanthemum.bloomed .petals {
+  animation: petal-spin 18s linear(-0.09 -21.32%, 0.03 116.18%) infinite 1.8s;
 }
 
 .chrysanthemum.bloomed .bud {
@@ -618,13 +576,25 @@ body {
   }
 }
 
-@keyframes petal-wave {
-  0%,
-  100% {
-    filter: drop-shadow(0 8px 10px rgba(98, 64, 152, 0.25));
+@keyframes petal-pop {
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--petal-rotate))
+      translateY(calc((var(--petal-radius) + var(--core-radius) + var(--petal-offset)) * -0.4))
+      scaleY(0.2);
   }
-  50% {
-    filter: drop-shadow(0 14px 18px rgba(98, 64, 152, 0.35));
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--petal-rotate))
+      translateY(calc((var(--petal-radius) + var(--core-radius) + var(--petal-offset)) * -1))
+      scaleY(var(--petal-stretch, 1));
   }
 }
 

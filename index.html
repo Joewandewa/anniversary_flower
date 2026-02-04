@@ -38,15 +38,9 @@
             <span class="leaf leaf-right"></span>
             <span class="bud"></span>
           </div>
-          <div class="bloom">
-            <div class="petal-rotation">
-              <div class="petal-ring ring-outer"></div>
-              <div class="petal-ring ring-outer-2"></div>
-              <div class="petal-ring ring-middle"></div>
-              <div class="petal-ring ring-middle-2"></div>
-              <div class="petal-ring ring-inner"></div>
-              <div class="core"></div>
-            </div>
+         <div class="bloom">
+            <div class="petals" id="mainPetals"></div>
+            <div class="core"></div>
           </div>
         </div>
         <div class="mini-garden" id="miniGarden"></div>
@@ -79,8 +73,27 @@
     const minStem = 100;
     const maxStem = 150;
     let hasBloomed = false;
-    const minPetals = 50;
+    const minPetals = 60;
     const maxPetals = 100;
+    const petalsContainer = document.getElementById('mainPetals');
+
+    const buildPetals = (count) => {
+      petalsContainer.innerHTML = '';
+      const angleStep = 360 / count;
+      const baseDelay = 0.035;
+      for (let i = 0; i < count; i += 1) {
+        const petal = document.createElement('span');
+        petal.className = 'petal';
+        const radius = 8 + Math.random() * 10;
+        const stretch = 0.85 + Math.random() * 0.3;
+        const rotate = i * angleStep + (Math.random() * 6 - 3);
+        petal.style.setProperty('--petal-rotate', `${rotate.toFixed(2)}deg`);
+        petal.style.setProperty('--petal-radius', `${radius.toFixed(1)}px`);
+        petal.style.setProperty('--petal-stretch', stretch.toFixed(2));
+        petal.style.setProperty('--petal-delay', `${(i * baseDelay).toFixed(2)}s`);
+        petalsContainer.appendChild(petal);
+      }
+    };
 
     const createSparkle = () => {
       const sparkle = document.createElement('span');
@@ -134,6 +147,7 @@
         const petalAngle = 360 / petalCount;
         chrysanthemum.style.setProperty('--petal-count', petalCount);
         chrysanthemum.style.setProperty('--petal-angle', `${petalAngle.toFixed(2)}deg`);
+        buildPetals(petalCount);
         chrysanthemum.classList.remove('bloomed');
         void chrysanthemum.offsetWidth;
         chrysanthemum.classList.add('bloomed');
