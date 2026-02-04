@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anniversary Kita</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="sky">
+    <div class="stars"></div>
+    <div class="stars small"></div>
+  </div>
+
+  <main class="card">
+    <header class="header">
+      <div class="badge">💜 Anniversary</div>
+      <h1>Untuk Tasya Tersayang</h1>
+      <p class="subtitle">
+        Hari ini spesial karena kamu. Sentuh tombolnya, lalu lihat bunga krisan ungu mekar dengan lembut dari batangnya.
+      </p>
+    </header>
+
+    <section class="scene">
+      <div class="floating-cloud cloud-a"></div>
+      <div class="floating-cloud cloud-b"></div>
+
+      <div class="heart-orbit">
+        <span class="heart"></span>
+        <span class="heart"></span>
+        <span class="heart"></span>
+      </div>
+
+      <div class="garden">
+        <div class="chrysanthemum" id="chrysanthemum">
+          <div class="stem">
+            <span class="leaf leaf-left"></span>
+            <span class="leaf leaf-right"></span>
+            <span class="bud"></span>
+          </div>
+          <div class="bloom">
+            <div class="petal-rotation">
+              <div class="petal-ring ring-outer"></div>
+              <div class="petal-ring ring-outer-2"></div>
+              <div class="petal-ring ring-middle"></div>
+              <div class="petal-ring ring-middle-2"></div>
+              <div class="petal-ring ring-inner"></div>
+              <div class="core"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mini-garden" id="miniGarden"></div>
+      </div>
+
+      <div class="message">
+        <p>
+          Kamu adalah alasan di balik senyumku ✨
+          <span>Terima kasih sudah jadi rumah yang hangat.</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="controls">
+      <button class="bloom-btn" id="bloomButton">
+        Klik untuk Mekar
+      </button>
+      <div class="hint">Coba klik beberapa kali untuk efek bunga tambahan.</div>
+    </section>
+  </main>
+
+  <div class="sparkles" id="sparkles"></div>
+
+  <script>
+    const bloomButton = document.getElementById('bloomButton');
+    const chrysanthemum = document.getElementById('chrysanthemum');
+    const sparkles = document.getElementById('sparkles');
+    const miniGarden = document.getElementById('miniGarden');
+    const miniFlowerLimit = 50;
+    const minStem = 100;
+    const maxStem = 150;
+    let hasBloomed = false;
+    const minPetals = 50;
+    const maxPetals = 100;
+
+    const createSparkle = () => {
+      const sparkle = document.createElement('span');
+      sparkle.className = 'sparkle';
+      sparkle.style.left = `${Math.random() * 100}%`;
+      sparkle.style.top = `${50 + Math.random() * 30}%`;
+      sparkle.style.setProperty('--sparkle-delay', `${Math.random() * 0.6}s`);
+      sparkle.style.setProperty('--sparkle-rotate', `${Math.random() * 80 - 40}deg`);
+      sparkles.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 2000);
+    };
+
+    const createMiniFlower = () => {
+      const flower = document.createElement('div');
+      flower.className = 'mini-flower';
+      const stemHeight = Math.random() * (maxStem - minStem) + minStem;
+      const scale = 0.45 + (stemHeight - minStem) / (maxStem - minStem) * 0.35;
+      const currentCount = miniGarden.children.length;
+      flower.style.setProperty('--x', `${Math.random() * 90 + 5}%`);
+      flower.style.setProperty('--delay', `${Math.random() * 0.4}s`);
+      flower.style.setProperty('--stem-height', `${stemHeight}px`);
+      flower.style.setProperty('--scale', scale.toFixed(2));
+      flower.style.setProperty('--layer', `${miniFlowerLimit - currentCount}`);
+      const miniPetalCount = Math.floor(Math.random() * (maxPetals - minPetals + 1)) + minPetals;
+      const miniPetalAngle = 360 / miniPetalCount;
+      flower.style.setProperty('--mini-petal-count', miniPetalCount);
+      flower.style.setProperty('--mini-petal-angle', `${miniPetalAngle.toFixed(2)}deg`);
+      flower.innerHTML = `
+        <div class="mini-stem"></div>
+        <div class="mini-bloom">
+          <div class="mini-rotation">
+            <span class="mini-ring ring-a"></span>
+            <span class="mini-ring ring-b"></span>
+            <span class="mini-ring ring-c"></span>
+            <span class="mini-core"></span>
+          </div>
+        </div>
+      `;
+      miniGarden.appendChild(flower);
+      if (miniGarden.children.length > miniFlowerLimit) {
+        miniGarden.removeChild(miniGarden.firstElementChild);
+      }
+    };
+
+    bloomButton.addEventListener('click', () => {
+      for (let i = 0; i < 8; i += 1) {
+        setTimeout(createSparkle, i * 120);
+      }
+      if (!hasBloomed) {
+        const petalCount = Math.floor(Math.random() * (maxPetals - minPetals + 1)) + minPetals;
+        const petalAngle = 360 / petalCount;
+        chrysanthemum.style.setProperty('--petal-count', petalCount);
+        chrysanthemum.style.setProperty('--petal-angle', `${petalAngle.toFixed(2)}deg`);
+        chrysanthemum.classList.remove('bloomed');
+        void chrysanthemum.offsetWidth;
+        chrysanthemum.classList.add('bloomed');
+        hasBloomed = true;
+        return;
+      }
+      createMiniFlower();
+    });
+  </script>
+</body>
+</html>
